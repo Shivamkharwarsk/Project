@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Train Management System</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom right, #6a11cb, #2575fc);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      padding: 20px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    h1, h2 {
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin: 15px 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 1rem;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      background: #ff6f61;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #ff4433;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .output {
+      margin-top: 20px;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Train Management System</h1>
+    <div id="train-search">
+      <h2>Search Trains</h2>
+      <div class="form-group">
+        <label for="from">From:</label>
+        <input type="text" id="from" placeholder="Enter departure station">
+      </div>
+      <div class="form-group">
+        <label for="to">To:</label>
+        <input type="text" id="to" placeholder="Enter destination station">
+      </div>
+      <div class="form-group">
+        <label for="date">Date:</label>
+        <input type="date" id="date">
+      </div>
+      <button onclick="searchTrains()">Search Trains</button>
+    </div>
+
+    <div id="train-results" class="hidden">
+      <h2>Available Trains</h2>
+      <ul id="trains-list"></ul>
+      <button onclick="goBack()">Back</button>
+    </div>
+
+    <div id="booking-confirmation" class="hidden">
+      <h2>Booking Confirmation</h2>
+      <p class="output" id="booking-details"></p>
+      <button onclick="restart()">Book Another Ticket</button>
+    </div>
+  </div>
+
+  <script>
+    // Dummy train data
+    const trains = [
+      { from: "Delhi", to: "Mumbai", date: "2024-12-01", train: "Rajdhani Express", time: "6:00 AM" },
+      { from: "Kolkata", to: "Delhi", date: "2024-12-01", train: "Howrah Express", time: "2:00 PM" },
+      { from: "Chennai", to: "Bangalore", date: "2024-12-02", train: "Shatabdi Express", time: "8:00 AM" }
+    ];
+
+    function searchTrains() {
+      const from = document.getElementById('from').value.trim();
+      const to = document.getElementById('to').value.trim();
+      const date = document.getElementById('date').value;
+
+      const results = trains.filter(train =>
+        train.from.toLowerCase() === from.toLowerCase() &&
+        train.to.toLowerCase() === to.toLowerCase() &&
+        train.date === date
+      );
+
+      if (results.length > 0) {
+        displayTrains(results);
+      } else {
+        alert('No trains found. Please try different details.');
+      }
+    }
+
+    function displayTrains(trains) {
+      const trainSearchDiv = document.getElementById('train-search');
+      const trainResultsDiv = document.getElementById('train-results');
+      const trainsList = document.getElementById('trains-list');
+
+      trainsList.innerHTML = '';
+      trains.forEach(train => {
+        const li = document.createElement('li');
+        li.textContent = `${train.train} - ${train.from} to ${train.to} at ${train.time}`;
+        const bookButton = document.createElement('button');
+        bookButton.textContent = "Book Now";
+        bookButton.onclick = () => confirmBooking(train);
+        li.appendChild(bookButton);
+        trainsList.appendChild(li);
+      });
+
+      trainSearchDiv.classList.add('hidden');
+      trainResultsDiv.classList.remove('hidden');
+    }
+
+    function confirmBooking(train) {
+      const trainResultsDiv = document.getElementById('train-results');
+      const bookingConfirmationDiv = document.getElementById('booking-confirmation');
+      const bookingDetails = document.getElementById('booking-details');
+
+      bookingDetails.textContent = `Your train ${train.train} from ${train.from} to ${train.to} on ${train.date} at ${train.time} has been booked successfully!`;
+
+      trainResultsDiv.classList.add('hidden');
+      bookingConfirmationDiv.classList.remove('hidden');
+    }
+
+    function goBack() {
+      const trainSearchDiv = document.getElementById('train-search');
+      const trainResultsDiv = document.getElementById('train-results');
+
+      trainSearchDiv.classList.remove('hidden');
+      trainResultsDiv.classList.add('hidden');
+    }
+
+    function restart() {
+      const trainSearchDiv = document.getElementById('train-search');
+      const bookingConfirmationDiv = document.getElementById('booking-confirmation');
+
+      trainSearchDiv.classList.remove('hidden');
+      bookingConfirmationDiv.classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
